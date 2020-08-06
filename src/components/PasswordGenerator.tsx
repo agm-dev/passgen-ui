@@ -24,6 +24,7 @@ import {
   sadOutline,
 } from "ionicons/icons"
 import{ generatePass } from "../passgen.bundle"
+import copy from "copy-to-clipboard"
 
 type PassType = "alpha" | "num" | "alphanum" | "alphanumExt" | "words-es" | "words-en" | "pokemon-1st"
 
@@ -64,14 +65,14 @@ const PasswordGenerator: React.FC<ContainerProps> = () => {
       caps,
     })
     const { pass, entropy, strength, relativeEntropy, relativeStrength } = data
-    console.log("generated", data)
+    console.log("[passgen]", data)
     setPassword(pass)
     setEntropy(entropy)
     setRelativeEntropy(relativeEntropy)
     setStrength(strength)
     setRelativeStrength(relativeStrength)
 
-    copyToClipboard(password)
+    copyToClipboard(pass)
     setShowToast(true)
   }
 
@@ -109,6 +110,9 @@ const PasswordGenerator: React.FC<ContainerProps> = () => {
       {!!password.length && (
         <IonRow>
           <IonCol>
+            <IonChip>
+              <IonLabel>Length {password.length}</IonLabel>
+            </IonChip>
             <IonChip>
               <IonLabel>Entropy {Math.round(entropy * 100) / 100}</IonLabel>
             </IonChip>
@@ -191,14 +195,7 @@ const PasswordGenerator: React.FC<ContainerProps> = () => {
 
 export default PasswordGenerator;
 
-const copyToClipboard = (text: string): void => {
-  const el = document.createElement('textarea');
-  el.value = text;
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand('copy');
-  document.body.removeChild(el);
-}
+const copyToClipboard = (text: string): boolean => copy(text)
 
 interface StrengthChipProps {
   text: string
