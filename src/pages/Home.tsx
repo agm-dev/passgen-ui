@@ -8,7 +8,7 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Blank</IonTitle>
+          <IonTitle>Password Generator</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
