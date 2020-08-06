@@ -1,0 +1,7 @@
+{
+  "name": "passgen-ui",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
