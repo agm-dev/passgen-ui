@@ -16,7 +16,8 @@ import {
   IonIcon,
   IonToast,
   IonText,
-  IonTextarea
+  IonTextarea,
+  IonAlert,
 } from '@ionic/react';
 import {
   skullOutline,
@@ -92,6 +93,7 @@ const PasswordGenerator: React.FC<ContainerProps> = () => {
           <IonButton
             size="default"
             onClick={() => generate()}
+
           >Generate Random Password</IonButton>
         </IonCol>
       </IonRow>
@@ -113,23 +115,29 @@ const PasswordGenerator: React.FC<ContainerProps> = () => {
             <IonChip>
               <IonLabel>Length {password.length}</IonLabel>
             </IonChip>
-            <IonChip>
-              <IonLabel>Entropy {Math.round(entropy * 100) / 100}</IonLabel>
-            </IonChip>
+            <EntropyChip
+              text="Entropy"
+              value={`${Math.round(entropy * 100) / 100}`}
+              description="Password entropy is a measurement of how unpredictable a password is."
+            ></EntropyChip>
             <StrengthChip
               text="Strength"
               value={strength}
+              description="Describes the strength of the generated password against generic brute force attacks."
             ></StrengthChip>
             {["words-es", "words-en", "pokemon-1st"].includes(type) && (
-              <div>
-                <IonChip>
-                  <IonLabel>Relative entropy {Math.round(relativeEntropy * 100) / 100}</IonLabel>
-                </IonChip>
+              <>
+                <EntropyChip
+                  text="Relative entropy"
+                  value={`${Math.round(relativeEntropy * 100) / 100}`}
+                  description="Password entropy is a measurement of how unpredictable a password is. In this case it is calculated considering that each word is a unique character, since it is really being used in that way in the password generation."
+                ></EntropyChip>
                 <StrengthChip
                   text="Relative strength"
                   value={relativeStrength}
+                  description="Describes the strength of the generated password against specific brute force attacks that know the password was generated with this application."
                 ></StrengthChip>
-              </div>
+              </>
             )}
           </IonCol>
         </IonRow>
@@ -197,23 +205,54 @@ export default PasswordGenerator;
 
 const copyToClipboard = (text: string): boolean => copy(text)
 
-interface StrengthChipProps {
+interface ChipProps {
   text: string
   value: string
+  description: string
 }
-const StrengthChip: React.FC<StrengthChipProps> = ({ text, value }) => {
+const StrengthChip: React.FC<ChipProps> = ({ text, value, description }) => {
+  const [showAlert, setShowAlert] = useState(false)
   return (
-    <IonChip>
-      {["strong", "very strong", "overkill"].includes(value) && (
-        <IonIcon icon={shieldCheckmarkOutline}></IonIcon>
-      )}
-      {["reasonable"].includes(value) && (
-        <IonIcon icon={sadOutline}></IonIcon>
-      )}
-      {["very weak", "weak"].includes(value) && (
-        <IonIcon icon={skullOutline}></IonIcon>
-      )}
-      <IonLabel>{text}: {value}</IonLabel>
-    </IonChip>
+    <>
+      <IonChip onClick={() => setShowAlert(true)}>
+        {["strong", "very strong", "overkill"].includes(value) && (
+          <IonIcon icon={shieldCheckmarkOutline}></IonIcon>
+        )}
+        {["reasonable"].includes(value) && (
+          <IonIcon icon={sadOutline}></IonIcon>
+        )}
+        {["very weak", "weak"].includes(value) && (
+          <IonIcon icon={skullOutline}></IonIcon>
+        )}
+        <IonLabel>{text}: {value}</IonLabel>
+      </IonChip>
+      <IonAlert
+        isOpen={showAlert}
+        onDidDismiss={() => setShowAlert(false)}
+        cssClass="chip-description"
+        header={text}
+        message={description}
+        buttons={["OK"]}
+      ></IonAlert>
+    </>
+  )
+}
+
+const EntropyChip: React.FC<ChipProps> = ({ text, value, description }) => {
+  const [showAlert, setShowAlert] = useState(false)
+  return (
+    <>
+      <IonChip onClick={() => setShowAlert(true)}>
+        <IonLabel>{text} {value}</IonLabel>
+      </IonChip>
+      <IonAlert
+        isOpen={showAlert}
+        onDidDismiss={() => setShowAlert(false)}
+        cssClass="chip-description"
+        header={text}
+        message={description}
+        buttons={["OK"]}
+      ></IonAlert>
+    </>
   )
 }
